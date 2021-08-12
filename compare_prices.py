@@ -12,8 +12,7 @@ from zoauth_client import ZOAuth2Client
 today = date.today().strftime("%Y%m%d")
 today_filename = f"Price_{today}"
 ftp = FtpFetch()
-# local_filename = ftp.fetch_specific_file(today_filename)
-local_filename = ftp.find_filename(today_filename)
+local_filename = ftp.fetch_specific_file(today_filename)
 config = dotenv_values(".env")
 wd_tokens = {
             "client_id": config["WD_CLIENT_ID"],
@@ -30,9 +29,9 @@ params = {
 data = {
     "content": open(local_filename, 'rb')
 }
-# response = wd.query("/api/v1/upload", p=params, file=data)
-# link = response["data"][0]["attributes"]["Permalink"]
-# print(f"File {local_filename} stored at:", link, f"as {local_filename}")
+response = wd.query("/api/v1/upload", p=params, file=data)
+link = response["data"][0]["attributes"]["Permalink"]
+print(f"File {local_filename} stored at:", link, f"as {local_filename}")
 
 yesterday = (date.today() - timedelta(days=1)).strftime("%Y%m%d")
 yesterday_filename_starts_with = f"Price_{yesterday}"
@@ -53,7 +52,6 @@ fc = FeedComparator(today_feed, yesterday_feed)
 increased = list()
 decreased = list()
 unchanged = 0
-
 
 print("Finding diffs...")
 for product in today_feed.get_next_product("ProductCode"):
@@ -94,7 +92,7 @@ cliq_tokens = {
     "access_token": config["CLIQ_ACCESS_TOKEN"]
 }
 
-cliq = CliqClient(cliq_tokens, "cliq.zoho")
+cliq = CliqClient(cliq_tokens)
 
 if len(increased) > 0 or len(decreased) > 0:
     print("Increased:", len(increased))
@@ -156,6 +154,9 @@ if len(increased) > 0 or len(decreased) > 0:
         }
     }]
 
+    response = cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
+    print(response)
+
 else:
-    pass
-    #post simple text message to cliq
+    response = cliq.postSimpleMessage("itgroup", f"RB Price Report For {today}: No changes detected.")
+    print(response)
