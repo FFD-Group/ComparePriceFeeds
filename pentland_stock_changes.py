@@ -2,11 +2,11 @@
 from cliq_client import CliqClient
 from datetime import date, timedelta
 from dotenv import dotenv_values
-from xml_feed import XMLFeed
 from feed_comparator import FeedComparator
 from feed_report import FeedReport
 from file_rotator import FileRotator
 from url_fetch import UrlFetch
+from xml_feed import XMLFeed
 from zoauth_client import ZOAuth2Client
 
 
@@ -17,6 +17,7 @@ class PentlandStockChanges:
         self.today = date.today()
         self.local_filename = "pentland_stock.xml"
         self.past_filename = "pentland_stock_yesterday.xml"
+        self.fileRot = FileRotator(self.local_filename, self.past_filename)
         self.config = dotenv_values(".env")
         self.wd_tokens = {
             "client_id": self.config["WD_CLIENT_ID"],
@@ -59,6 +60,7 @@ class PentlandStockChanges:
         return self.today_file_link
 
     def prepare(self):
+        self.fileRot.rotateFiles()
         self.fetch.fetch_file()
 
         remote_filename = f"{self.identifier}_stock_{self.today.strftime('%d-%m-%Y')}.xml"
