@@ -42,7 +42,7 @@ class PentlandStockChanges:
         self.prepare()
         self.compare()
         self.build_report()
-        # self.cliq_post()
+        self.cliq_post()
 
     def store_file(self, filename: str, store_as: str=None) -> str:
         remote_filename = store_as if store_as else filename
@@ -108,9 +108,3 @@ class PentlandStockChanges:
 
         result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
         print(result)
-
-if __name__ == "__main__":
-    psc = PentlandStockChanges("Pentland")
-    psc.run()
-    print(psc.new_in)
-    print(psc.new_oos)
