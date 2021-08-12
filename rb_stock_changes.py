@@ -35,6 +35,13 @@ class RBStockChanges:
         }
         self.cliq = CliqClient(self.cliq_tokens)
 
+    def run(self):
+        self.prepare()
+        self.compare()
+        if len(self.new_in) > 0 or len(self.new_oos) > 0 or len(self.dropped) > 0:
+            self.report()
+        self.cliq_post()
+
     def store_file(self, filename: str, store_as: str=None) -> str:
         remote_filename = store_as if store_as else filename
         params = {
@@ -75,34 +82,38 @@ class RBStockChanges:
 
     def cliq_post(self):
         today = date.today().strftime("%d-%m-%Y")
-        chat_name = "itgroup"
-        card_text = f"RB Stock Report for {today}"
-        card_title = "RB Stock Report"
-        thumbnail = "https://media.nisbets.com/images/theme/uropa/logo/uropa-logo.svg"
-        table_title = "Detected Changes"
-        table_hdrs = ["Change", "Count"]
-        table_rws = [
-            {
-                "Change": "New OOS",
-                "Count": len(self.new_oos), 
-            }, {
-                "Change": "New in",
-                "Count": len(self.new_in), 
-            }, {
-                "Change": "Dropped",
-                "Count": len(self.dropped)
-            }
-        ]
-        btns = [{
-            "label": "View Report",
-            "type": "+",
-            "action": {
-                "type": "open.url",
-                "data": {
-                    "web": self.report_link
+        if len(self.new_in) > 0 or len(self.new_oos) > 0 or len(self.dropped) > 0:
+            chat_name = "itgroup"
+            card_text = f"RB Stock Report for {today}"
+            card_title = "RB Stock Report"
+            thumbnail = "https://media.nisbets.com/images/theme/uropa/logo/uropa-logo.svg"
+            table_title = "Detected Changes"
+            table_hdrs = ["Change", "Count"]
+            table_rws = [
+                {
+                    "Change": "New OOS",
+                    "Count": len(self.new_oos), 
+                }, {
+                    "Change": "New in",
+                    "Count": len(self.new_in), 
+                }, {
+                    "Change": "Dropped",
+                    "Count": len(self.dropped)
                 }
-            }
-        }]
+            ]
+            btns = [{
+                "label": "View Report",
+                "type": "+",
+                "action": {
+                    "type": "open.url",
+                    "data": {
+                        "web": self.report_link
+                    }
+                }
+            }]
 
-        result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
+            result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
+        else:
+            result = self.cliq.postSimpleMessage("itgroup", f"RB Stock Report For {today}: No changes detected.")
+
         print(result)
