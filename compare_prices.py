@@ -8,7 +8,7 @@ from ftp_fetch import FtpFetch
 from zoauth_client import ZOAuth2Client
 
 
-class RBChanges:
+class RBPriceChanges:
 
     def __init__(self) -> None:
         self.ftp = FtpFetch()
@@ -27,25 +27,32 @@ class RBChanges:
         }
         cliq = CliqClient(self.cliq_tokens)
 
+    def run(self):
+        self.fetch_today_feed()
+        self.store_today_feed()
+        self.load_feeds()
+        self.compare()
+        self.cliq_report()
+
     def fetch_today_feed(self):
         # Get the file starting with "Price_" + <today's date> in it's name
-        today = date.today().strftime("%Y%m%d")
-        today_filename = f"Price_{today}"
+        self.today = date.today().strftime("%Y%m%d")
+        today_filename = f"Price_{self.today}"
         
         self.today_feed_filename = self.ftp.fetch_specific_file(today_filename)
 
-    def store_today_feed(self, local_filename):
+    def store_today_feed(self):
         params = {
-            "filename": local_filename,
+            "filename": self.today_feed_filename,
             "parent_id": self.config["WD_FOLDER_ID"],
             "override-name-exist": False
         }
         data = {
-            "content": open(local_filename, 'rb')
+            "content": open(self.today_feed_filename, 'rb')
         }
         response = self.wd.query("/api/v1/upload", p=params, file=data)
         self.link = response["data"][0]["attributes"]["Permalink"]
-        print(f"File {local_filename} stored at:", link, f"as {local_filename}")
+        print(f"File {self.today_feed_filename} stored at:", self.link, f"as {self.today_feed_filename}")
         return self.link
 
     def load_feeds(self):
@@ -161,5 +168,5 @@ class RBChanges:
             response = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
             print(response)
         else:
-            response = self.cliq.postSimpleMessage("itgroup", f"RB Price Report For {today}: No changes detected.")
+            response = self.cliq.postSimpleMessage("itgroup", f"RB Price Report For {self.today}: No changes detected.")
             print(response)
