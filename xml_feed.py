@@ -1,5 +1,4 @@
 from feed import Feed
-from numpy import dtype
 import pandas as pd
 import xml.etree.ElementTree as ET
 
