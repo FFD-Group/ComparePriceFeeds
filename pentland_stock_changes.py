@@ -9,7 +9,6 @@ from url_fetch import UrlFetch
 from xml_feed import XMLFeed
 from zoauth_client import ZOAuth2Client
 
-
 class PentlandStockChanges:
 
     def __init__(self, identifier: str) -> None:
@@ -41,7 +40,8 @@ class PentlandStockChanges:
     def run(self):
         self.prepare()
         self.compare()
-        self.build_report()
+        if len(self.new_oos) > 0 or len(self.new_in) > 0:
+            self.build_report()
         self.cliq_post()
 
     def store_file(self, filename: str, store_as: str=None) -> str:
@@ -80,31 +80,35 @@ class PentlandStockChanges:
         self.report_link = self.store_file(self.fr.filename)
 
     def cliq_post(self):
-        chat_name = "itgroup"
-        card_text = f"Pentland Stock Report for {self.today.strftime('%d-%m-%Y')}"
-        card_title = "Pentland Stock Report"
-        thumbnail = "https://www.pentlandwholesale.co.uk/skin/frontend/piranha/default/images/logo.png"
-        table_title = "Detected Changes"
-        table_hdrs = ["Change", "Count"]
-        table_rws = [
-            {
-                "Change": "New OOS",
-                "Count": len(self.new_oos), 
-            }, {
-                "Change": "New in",
-                "Count": len(self.new_in), 
-            }
-        ]
-        btns = [{
-            "label": "View Report",
-            "type": "+",
-            "action": {
-                "type": "open.url",
-                "data": {
-                    "web": self.report_link
+        if len(self.new_in) > 0 or len(self.new_oos) > 0:
+            chat_name = "itgroup"
+            card_text = f"Pentland Stock Report for {self.today.strftime('%d-%m-%Y')}"
+            card_title = "Pentland Stock Report"
+            thumbnail = "https://www.pentlandwholesale.co.uk/skin/frontend/piranha/default/images/logo.png"
+            table_title = "Detected Changes"
+            table_hdrs = ["Change", "Count"]
+            table_rws = [
+                {
+                    "Change": "New OOS",
+                    "Count": len(self.new_oos), 
+                }, {
+                    "Change": "New in",
+                    "Count": len(self.new_in), 
                 }
-            }
-        }]
+            ]
+            btns = [{
+                "label": "View Report",
+                "type": "+",
+                "action": {
+                    "type": "open.url",
+                    "data": {
+                        "web": self.report_link
+                    }
+                }
+            }]
 
-        result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
+            result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
+        else:
+            result = self.cliq.postSimpleMessage("itgroup", f"Pentland Stock Report For {self.today.strftime('%d-%m-%Y')}: No changes detected.")
+
         print(result)
