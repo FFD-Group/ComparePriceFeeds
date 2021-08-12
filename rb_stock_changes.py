@@ -10,7 +10,7 @@ from ftp_fetch import FtpFetch
 from zoauth_client import ZOAuth2Client
 
 
-class StockFeedComparison:
+class RBStockChanges:
 
     def __init__(self, identifier: str) -> None:
         self.identifier = identifier
@@ -106,13 +106,3 @@ class StockFeedComparison:
 
         result = self.cliq.postInlineCard(chat_name, card_text, card_title, thumbnail, table_title, table_hdrs, table_rws, btns)
         print(result)
-
-if __name__ == "__main__":
-
-    sfc = StockFeedComparison("Uropa")
-    sfc.prepare()
-    sfc.compare()
-    # TODO: only post and report if there is changes to report
-    sfc.report()
-    sfc.cliq_post()
-    
