@@ -12,13 +12,13 @@ class FeedComparator:
         if self.f2.data.empty:
             raise ValueError("Feed 2 does not have any data!")
 
-        feed1_val = self.f1.get_product_data(product, value_col, "ProductCode")
-        feed2_val = self.f1.get_product_data(product, value_col, "ProductCode")
+        feed1_val = self.f1.get_product_data(product, value_col)
+        feed2_val = self.f1.get_product_data(product, value_col)
 
         return (feed1_val, feed2_val)
 
 
-    def get_newly_oos(self) -> list:
+    def get_newly_oos(self, stock_label: str="Stock Level", check_dropped: bool=False, due_date: bool=False) -> list:
         if self.f1.data.empty:
             raise ValueError("Feed 1 does not have any data!")
         if self.f2.data.empty:
@@ -26,17 +26,28 @@ class FeedComparator:
 
         newly_oos = list()
         for product in self.f1.get_next_product():
-            product_current_stock = self.f1.get_product_data(product, "Stock Level")
-            product_past_stock = self.f2.get_product_data(product, "Stock Level")
-            product_current_dropped = self.f1.get_product_data(product, "DROPPEDLINE")
-            if product_current_dropped != "Y":
+            product_current_stock = self.f1.get_product_data(product, stock_label)
+            product_past_stock = self.f2.get_product_data(product, stock_label)
+            if check_dropped:
+                product_current_dropped = self.f1.get_product_data(product, "DROPPEDLINE")
+                if product_current_dropped != "Y":
+                    if (product_current_stock == 0 and product_past_stock != 0):
+                        if due_date:
+                            stock_due = self.f1.get_product_data(product, "Stock Promise Date")
+                            newly_oos.append((product, stock_due))
+                        else:
+                            newly_oos.append(product)
+            else:
                 if (product_current_stock == 0 and product_past_stock != 0):
-                    stock_due = self.f1.get_product_data(product, "Stock Promise Date")
-                    newly_oos.append((product, stock_due))
+                    if due_date:
+                        stock_due = self.f1.get_product_data(product, "Stock Promise Date")
+                        newly_oos.append((product, stock_due))
+                    else:
+                        newly_oos.append(product)
 
         return newly_oos
 
-    def get_back_in_stock(self) -> list:
+    def get_back_in_stock(self, stock_label: str="Stock Level") -> list:
         if self.f1.data.empty:
             raise ValueError("Feed 1 does not have any data!")
         if self.f2.data.empty:
@@ -44,8 +55,8 @@ class FeedComparator:
 
         newly_in = list()
         for product in self.f1.get_next_product():
-            product_current_stock = self.f1.get_product_data(product, "Stock Level")
-            product_past_stock = self.f2.get_product_data(product, "Stock Level")
+            product_current_stock = self.f1.get_product_data(product, stock_label)
+            product_past_stock = self.f2.get_product_data(product, stock_label)
             if (product_current_stock != 0 and product_past_stock == 0):
                 newly_in.append((product, product_current_stock))
 

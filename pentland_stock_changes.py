@@ -40,7 +40,7 @@ class PentlandStockChanges:
     def run(self):
         self.prepare()
         # TODO: make feed comparator more flexible
-        # self.compare()
+        self.compare()
         # TODO: make feed report more flexible
         # self.build_report()
         # self.cliq_post()
@@ -70,9 +70,8 @@ class PentlandStockChanges:
         self.feed_yesterday.loadToDataFrame()
 
     def compare(self):
-        self.new_oos = self.fc.get_newly_oos()
-        self.new_in = self.fc.get_back_in_stock()
-        self.dropped = self.fc.get_newly_dropped_lines()
+        self.new_oos = self.fc.get_newly_oos("stockLevel")
+        self.new_in = self.fc.get_back_in_stock("stockLevel")
 
     def build_report(self):
         self.fr.write_newly_oos(self.new_oos)

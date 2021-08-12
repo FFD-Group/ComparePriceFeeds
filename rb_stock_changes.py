@@ -62,7 +62,7 @@ class RBStockChanges:
         self.feed_yesterday.loadToDataFrame()
 
     def compare(self):
-        self.new_oos = self.fc.get_newly_oos()
+        self.new_oos = self.fc.get_newly_oos(check_dropped=True, due_date=True)
         self.new_in = self.fc.get_back_in_stock()
         self.dropped = self.fc.get_newly_dropped_lines()
 
