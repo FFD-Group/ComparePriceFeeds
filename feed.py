@@ -3,8 +3,9 @@ import pandas as pd
 
 class Feed:
 
-    def __init__(self, filename: str):
+    def __init__(self, filename: str, dic: str):
         self.filename = filename
+        self.data_identifier_column = dic
         self.data = None
         self.rows = 0
 
@@ -15,10 +16,12 @@ class Feed:
     def __str__(self):
         return f"Feed from file: '{self.filename}' with {self.rows} rows of data."
 
-    def get_product_data(self, product_code: str, column_label: str, product_code_label:str="Product Code"):
+    def get_product_data(self, product_code: str, column_label: str, product_code_label:str=None):
+        product_code_label = self.data_identifier_column if not product_code_label else product_code_label
         return self.data.loc[self.data[product_code_label] == product_code, column_label].tolist()
 
-    def get_next_product(self, product_code_label:str="Product Code") -> str:
+    def get_next_product(self, product_code_label:str=None) -> str:
+        product_code_label = self.data_identifier_column if not product_code_label else product_code_label
         for product_code in self.data[product_code_label].values:
             yield product_code
 

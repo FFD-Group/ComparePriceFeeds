@@ -23,8 +23,8 @@ class RBStockChanges:
         self.zwd = ZOAuth2Client(self.wd_tokens, "workdrive.zoho")
         self.fileRot = FileRotator()
         self.ftp = FtpFetch()
-        self.feed_today = Feed("today.csv")
-        self.feed_yesterday = Feed("yesterday.csv")
+        self.feed_today = Feed("today.csv", "Product Code")
+        self.feed_yesterday = Feed("yesterday.csv", "Product Code")
         self.fc = FeedComparator(self.feed_today, self.feed_yesterday)
         self.fr = FeedReport()
         self.cliq_tokens = {

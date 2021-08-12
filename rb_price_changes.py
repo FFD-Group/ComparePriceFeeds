@@ -60,8 +60,8 @@ class RBPriceChanges:
         yesterday_filename_starts_with = f"Price_{yesterday}"
         yesterday_filename = self.ftp.find_filename(yesterday_filename_starts_with)
 
-        self.today_feed = Feed(self.today_feed_filename)
-        self.yesterday_feed = Feed(yesterday_filename)
+        self.today_feed = Feed(self.today_feed_filename, "ProductCode")
+        self.yesterday_feed = Feed(yesterday_filename, "ProductCode")
 
         self.today_feed.loadToDataFrame()
         self.yesterday_feed.loadToDataFrame()

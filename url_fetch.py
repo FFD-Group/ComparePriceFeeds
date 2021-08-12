@@ -28,6 +28,7 @@ class UrlFetch:
         if uploadToWorkDrive:
             remote_name = remote_filename if remote_filename else self.local_filename
             link = self.upload_to_zwd(self.local_filename, remote_name)
+        else: link = None
         return link if link else f"Downloaded as: {self.local_filename}"
 
     def upload_to_zwd(self, local_filename: str, remote_filename: str) -> str:

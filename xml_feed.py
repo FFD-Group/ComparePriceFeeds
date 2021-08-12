@@ -7,12 +7,14 @@ class XMLFeed(Feed):
     A Feed class to enable operations on data from an XML file.
     '''
 
-    def __init__(self, filename: str):
+    def __init__(self, filename: str, dic: str):
         '''
         Create a new XML Feed from an XML file.
-        @params filename        The name of the local file to read.
+        @param filename        The name of the local file to read.
+        @param dic              Name of record ID column in Feed.
         '''
         self.filename = filename
+        self.data_identifier_column = dic
         self.data = None
         self.rows = 0
 
