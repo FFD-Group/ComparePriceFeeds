@@ -12,6 +12,15 @@ class CliqClient(ZOAuth2Client):
         h["Content-Type"] = "application/json"
         return h
 
+    def postSimpleMessage(self, chat_name: str, card_text: str):
+        query_url = f"/api/v2/channelsbyname/{chat_name}/message"
+
+        data = {
+            "text": card_text
+        }
+        response = self.query(query_url, d=data, json=True)
+        return response
+
     def postInlineCard(self, chat_name: str, card_text: str, card_title: str, thumbnail: str, table_title: str,
                         table_headers: list, table_rows: list, buttons: list):
         query_url = f"/api/v2/channelsbyname/{chat_name}/message"
