@@ -12,14 +12,18 @@ class FeedReport:
         self.wb.save(self.filename)
         self.wb["Sheet"].title = self.report_sheet_name
 
-    def write_newly_oos(self, items: list):
+    def write_newly_oos(self, items: list, add_due_dates: bool=False):
         oos_sh = self.wb.create_sheet("Newly OOS")
         oos_sh.append(['sku', 'is_in_stock'])
-        dd_sh = self.wb.create_sheet("Due Dates")
-        dd_sh.append(['sku', 'due date'])
+        if add_due_dates:
+            dd_sh = self.wb.create_sheet("Due Dates")
+            dd_sh.append(['sku', 'due date'])
         for product in items:
-            oos_sh.append([product[0], 0])
-            dd_sh.append(product)
+            if add_due_dates:
+                oos_sh.append([product[0], 0])
+                dd_sh.append(product)
+            else:
+                oos_sh.append([product, 0])
 
         report_sh = self.wb[self.report_sheet_name]
         report_sh.append(["OOS Items:", len(items)])
@@ -29,7 +33,10 @@ class FeedReport:
         bis_sh = self.wb.create_sheet("Back in")
         bis_sh.append(['sku', 'is_in_stock'])
         for product in items:
-            bis_sh.append([product[0], 1])
+            if len(product) < 2:
+                bis_sh.append([product, 1])
+            else:
+                bis_sh.append([product[0], 1])
         
         report_sh = self.wb[self.report_sheet_name]
         report_sh.append(["Back in stock:", len(items)])

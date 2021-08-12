@@ -39,7 +39,6 @@ class PentlandStockChanges:
 
     def run(self):
         self.prepare()
-        # TODO: make feed comparator more flexible
         self.compare()
         # TODO: make feed report more flexible
         # self.build_report()
@@ -76,7 +75,6 @@ class PentlandStockChanges:
     def build_report(self):
         self.fr.write_newly_oos(self.new_oos)
         self.fr.write_back_in(self.new_in)
-        self.fr.write_dropped(self.dropped)
 
         self.report_link = self.store_file(self.fr.filename)
 

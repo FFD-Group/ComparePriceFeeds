@@ -67,7 +67,7 @@ class RBStockChanges:
         self.dropped = self.fc.get_newly_dropped_lines()
 
     def report(self):
-        self.fr.write_newly_oos(self.new_oos)
+        self.fr.write_newly_oos(self.new_oos, add_due_dates=True)
         self.fr.write_back_in(self.new_in)
         self.fr.write_dropped(self.dropped)
 
