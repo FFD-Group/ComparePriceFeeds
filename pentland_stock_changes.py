@@ -28,7 +28,7 @@ class PentlandStockChanges:
         self.feed_today = XMLFeed(self.local_filename, "productCode")
         self.feed_yesterday = XMLFeed(self.past_filename, "productCode")
         self.fc = FeedComparator(self.feed_today, self.feed_yesterday)
-        self.fr = FeedReport()
+        self.fr = FeedReport(f"Pentland_Stock_{self.today.strftime('%Y-%m-%d')}.xlsx")
         self.cliq_tokens = {
             "client_id": self.config["CLIQ_CLIENT_ID"],
             "client_secret": self.config["CLIQ_CLIENT_SECRET"],
@@ -40,8 +40,7 @@ class PentlandStockChanges:
     def run(self):
         self.prepare()
         self.compare()
-        # TODO: make feed report more flexible
-        # self.build_report()
+        self.build_report()
         # self.cliq_post()
 
     def store_file(self, filename: str, store_as: str=None) -> str:
