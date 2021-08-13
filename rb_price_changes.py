@@ -25,7 +25,7 @@ class RBPriceChanges:
             "refresh_token": self.config["CLIQ_REFRESH_TOKEN"],
             "access_token": self.config["CLIQ_ACCESS_TOKEN"]
         }
-        cliq = CliqClient(self.cliq_tokens)
+        self.cliq = CliqClient(self.cliq_tokens)
 
     def run(self):
         self.fetch_today_feed()

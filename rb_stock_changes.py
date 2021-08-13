@@ -59,7 +59,7 @@ class RBStockChanges:
 
     def prepare(self):
         self.fileRot.rotateFiles()
-        self.ftp.fetch_file()
+        self.ftp.fetch_stock_file()
 
         today = date.today()
         remote_filename = f"{self.identifier}_stock_{today.strftime('%d-%m-%Y')}.csv"
