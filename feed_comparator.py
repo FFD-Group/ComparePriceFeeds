@@ -26,14 +26,14 @@ class FeedComparator:
 
         newly_oos = list()
         for product in self.f1.get_next_product():
-            product_current_stock = self.f1.get_product_data(product, stock_label)
-            product_past_stock = self.f2.get_product_data(product, stock_label)
+            product_current_stock = int(self.f1.get_product_data(product, stock_label)[0])
+            product_past_stock = int(self.f2.get_product_data(product, stock_label)[0])
             if check_dropped:
-                product_current_dropped = self.f1.get_product_data(product, "DROPPEDLINE")
+                product_current_dropped = str(self.f1.get_product_data(product, "DROPPEDLINE")[0])
                 if product_current_dropped != "Y":
                     if (product_current_stock == 0 and product_past_stock != 0):
                         if due_date:
-                            stock_due = self.f1.get_product_data(product, "Stock Promise Date")
+                            stock_due = str(self.f1.get_product_data(product, "Stock Promise Date")[0])
                             newly_oos.append((product, stock_due))
                         else:
                             newly_oos.append(product)
@@ -55,8 +55,8 @@ class FeedComparator:
 
         newly_in = list()
         for product in self.f1.get_next_product():
-            product_current_stock = self.f1.get_product_data(product, stock_label)
-            product_past_stock = self.f2.get_product_data(product, stock_label)
+            product_current_stock = int(self.f1.get_product_data(product, stock_label)[0])
+            product_past_stock = int(self.f2.get_product_data(product, stock_label)[0])
             if (product_current_stock != 0 and product_past_stock == 0):
                 newly_in.append((product, product_current_stock))
 
@@ -70,19 +70,9 @@ class FeedComparator:
 
         newly_dropped = list()
         for product in self.f1.get_next_product():
-            product_current_dl = self.f1.get_product_data(product, "DROPPEDLINE")
-            product_past_dl = self.f2.get_product_data(product, "DROPPEDLINE")
+            product_current_dl = str(self.f1.get_product_data(product, "DROPPEDLINE")[0])
+            product_past_dl = str(self.f2.get_product_data(product, "DROPPEDLINE")[0])
             if (product_current_dl == "Y" and product_past_dl != "Y"):
                 newly_dropped.append(product)
 
         return newly_dropped
-
-if __name__ == "__main__":
-    fa = Feed("today.csv.example")
-    fa.loadToDataFrame()
-    fb = Feed("yesterday.csv.example")
-    fb.loadToDataFrame()
-    fc = FeedComparator(fa, fb)
-    print("Now Out of Stock:", fc.get_newly_oos())
-    print("Now Back in Stock:", fc.get_back_in_stock())
-    print("Dropped:", fc.get_newly_dropped_lines())
