@@ -7,7 +7,7 @@ class XMLFeed(Feed):
     A Feed class to enable operations on data from an XML file.
     '''
 
-    def __init__(self, filename: str, dic: str):
+    def __init__(self, filename: str, dic: str, main_element: str="product"):
         '''
         Create a new XML Feed from an XML file.
         @param filename        The name of the local file to read.
@@ -15,6 +15,7 @@ class XMLFeed(Feed):
         '''
         self.filename = filename
         self.data_identifier_column = dic
+        self.el_name = main_element
         self.data = None
         self.rows = 0
 
@@ -23,12 +24,12 @@ class XMLFeed(Feed):
         Load the data from the file into a dataframe object.
         '''
         xml_data = ET.parse(self.filename)
-        xml = self.product_xml_to_dict(xml_data.getroot())
+        xml = self.product_xml_to_dict(xml_data.getroot(), self.el_name)
         self.data = pd.DataFrame.from_dict(xml, dtype=str)
         self.data = self.data.transpose()
         self.rows = len(self.data.index)
 
-    def product_xml_to_dict(self, xml: ET.ElementTree, element_name="product") -> dict:
+    def product_xml_to_dict(self, xml: ET.ElementTree, element_name: str) -> dict:
         '''
         Parse the given-named XML elements into a dictionary.
         @param xml              The parsed ElementTree object from the file.
