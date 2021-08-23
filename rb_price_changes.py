@@ -33,6 +33,7 @@ class RBPriceChanges:
         self.load_feeds()
         self.compare()
         self.cliq_report()
+        self.ftp.ftp.close()
 
     def fetch_today_feed(self):
         # Get the file starting with "Price_" + <today's date> in it's name

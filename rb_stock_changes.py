@@ -37,6 +37,7 @@ class RBStockChanges:
 
     def run(self):
         self.prepare()
+        self.ftp.ftp.close()
         self.compare()
         if len(self.new_in) > 0 or len(self.new_oos) > 0 or len(self.dropped) > 0:
             self.report()
