@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dotenv import dotenv_values
 from typing import Union
 import requests
@@ -58,6 +58,10 @@ class UrlFetch:
     
 
 if __name__ == "__main__":
-    uf = UrlFetch("https://www.pentlandwholesale.co.uk/feeds/StockLevels.xml", "Pentland-Stock-Test.xml")
+    uf = UrlFetch("https://www.interlevin.co.uk/all-products.xml", "Interlevin-speed-Test.xml")
+    now = datetime.now()
+    print(f"Starting download at {now.strftime('%H:%M:%S')}...")
     f = uf.fetch_file(True)
-    print(f)
+    finish = datetime.now()
+    print(f"Download finished at {finish.strftime('%H:%M:%S')}.")
+    #print(f)
