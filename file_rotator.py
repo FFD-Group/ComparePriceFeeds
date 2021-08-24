@@ -34,6 +34,7 @@ class FileRotator:
 
 if __name__ == "__main__":
     ## TODO: move test to own file
+    ## TODO: more comprehensive test coverage
     from pathlib import Path
     import unittest
 
